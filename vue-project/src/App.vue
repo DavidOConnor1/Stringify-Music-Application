@@ -1,9 +1,9 @@
 <script setup>
-
+  import NavBar from './componets/NavBar.vue';
 </script>
 
 <template>
-  <h1>Stringify</h1>
+  <NavBar />
 </template>
 
 

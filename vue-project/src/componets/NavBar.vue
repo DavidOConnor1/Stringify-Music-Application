@@ -1,4 +1,5 @@
 <script setup>
+import logo from '@/assets/img/logo.png';
 </script>
 
 <template>
@@ -12,7 +13,7 @@
             <a class="flex flex-shrink-0 items-center mr-4" href="index.html">
               <img class="h-10 w-auto" :src="logo" alt="Vue Jobs" />
               <span class="hidden md:block text-white text-2xl font-bold ml-2"
-                >Vue Jobs</span
+                >Stringify</span
               >
             </a>
             <div class="md:ml-auto">
@@ -25,12 +26,17 @@
                 <a
                   href="jobs.html"
                   class="text-white hover:bg-green-900 hover:text-white rounded-md px-3 py-2"
-                  >Jobs</a
+                  >Discover</a
                 >
                 <a
                   href="add-job.html"
                   class="text-white hover:bg-green-900 hover:text-white rounded-md px-3 py-2"
-                  >Add Job</a
+                  >Playlists</a
+                >
+                <a
+                  href="add-job.html"
+                  class="text-white hover:bg-green-900 hover:text-white rounded-md px-3 py-2"
+                  >Sign Up/Login</a
                 >
               </div>
             </div>
