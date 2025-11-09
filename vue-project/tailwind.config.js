@@ -9,6 +9,14 @@ export default {
       gridTemplateColumns: {
         '70-30': '70% 30%',
       },
+      extend: {
+        colors: {
+          gradient: {
+            start: '#0072FF', //blue
+            end: '#00C853', //green
+          },
+        },
+      },
     },
   },
   plugins: [],
