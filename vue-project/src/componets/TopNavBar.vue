@@ -18,10 +18,10 @@ import logo from '@/assets/img/logo.png';
             </a>
             <div class="md:ml-auto">
               <div class="flex space-x-2">
-                <a
-                  href="index.html"
+                <router-link
+                  to="/"
                   class="text-white bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
-                  >Home</a
+                  >Home</router-link
                 >
                 <a
                   href="jobs.html"
@@ -33,10 +33,10 @@ import logo from '@/assets/img/logo.png';
                   class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                   >Playlists</a
                 >
-                <a
-                  href="add-job.html"
+                <router-link
+                  to="./Signin"
                   class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                  >Sign Up/Login</a
+                  >Sign Up/Login</router-link
                 >
               </div>
             </div>

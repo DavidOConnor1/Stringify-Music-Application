@@ -1,7 +1,7 @@
 // src/main.js
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router' // 👈 import your router
+import router from './router' 
 import './assets/main.css'
 import { securedAxiosInstance, plainAxiosInstance } from './backend/axios'
 

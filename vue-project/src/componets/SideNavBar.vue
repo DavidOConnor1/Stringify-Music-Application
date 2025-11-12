@@ -1,6 +1,9 @@
 <script setup>
     import Features from '@/componets/Features.vue';
     import BodySections from '@/componets/BodySections.vue';
+
+
+    
 </script>
 
 <template>

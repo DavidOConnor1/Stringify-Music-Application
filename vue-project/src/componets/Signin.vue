@@ -1,5 +1,6 @@
 <script>
 
+
 export default {
     name:'Signin',
     data () {
@@ -50,34 +51,68 @@ export default {
 }
 </script>
 
+<script setup>
+import BodySections from './BodySections.vue';
+
+
+</script>
+
 <template>
-    <div class="max-w-sm m-auto my-8">
-        <div class="border p-10 border-grey-light shadow rounded">
-            <h3 class="text-2xl mb-6 text-grey:900">Sign In</h3>
-            <form @submit.prevent="signin">
-                <div class="text-red" v-if="Error">{{ error }}</div>
-                <div class="mb-6">
-                    <label for="username">Username: </label>
-                    <input type="text" v-model="username" id="username" placeholder="JohnDoeKnowsMoe">
-                </div>
+  
+   
+  <div class="min-h-screen flex items-center justify-center bg-gray-900">
+    <div class="max-w-sm w-full bg-white p-10 border border-gray-200 shadow rounded">
+      <h3 class="text-2xl mb-6 text-gray-900">Sign In</h3>
+      <form @submit.prevent="signin">
+        <div class="text-red-500" v-if="error">{{ error }}</div>
 
-                <div class="mb-6">
-                    <label for="email" >Email: </label>
-                    <input type="email" v-model="email" id="email" placeholder="JohnDoe@email.com">
-                </div>
-
-                <div class="mb-6">
-                    <label for="password">Password: </label>
-                    <input type="text" v-model="password" id="password" placeholder="SuperSecretPassword123">
-               </div>
-               <button type="submit" class="font-bold px-4 rounded cursor-pointer no-underline bg-gradient-to-b from-[#0072FF] to-[#00C853] block w-full py-4 text-white items-center justify-center">
-                Sign In
-               </button>
-
-               <div class="my-4">
-                <router-link to="/signup" class="">Sign Up</router-link>
-               </div>
-            </form>
+        <div class="mb-6">
+          <label for="username" class="block mb-1 text-gray-700">Username:</label>
+          <input
+            type="text"
+            v-model="username"
+            id="username"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            placeholder="JohnDoeKnowsMoe"
+          />
         </div>
+
+        <div class="mb-6">
+          <label for="email" class="block mb-1 text-gray-700">Email:</label>
+          <input
+            type="email"
+            v-model="email"
+            id="email"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            placeholder="JohnDoe@email.com"
+          />
+        </div>
+
+        <div class="mb-6">
+          <label for="password" class="block mb-1 text-gray-700">Password:</label>
+          <input
+            type="password"
+            v-model="password"
+            id="password"
+            class="w-full border border-gray-300 rounded px-3 py-2"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="font-bold px-4 rounded cursor-pointer bg-gradient-to-b from-[#0072FF] to-[#00C853] w-full py-3 text-white"
+        >
+          Sign In
+        </button>
+
+        <div class="my-4 text-center">
+          <router-link to="/signup" class="text-blue-600 hover:underline">Sign Up</router-link>
+        </div>
+      </form>
     </div>
+  </div>
+
+
+   
 </template>
