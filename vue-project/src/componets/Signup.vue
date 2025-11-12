@@ -2,12 +2,13 @@
 
 
 export default {
-    name:'Signin',
+    name:'Signup',
     data () {
         return {
             username: '',
             email: '',
             password: '',
+            passwordConfirmation: '',
             error: ''
         }
     },
@@ -20,7 +21,7 @@ export default {
     methods: {
         //take in the parameters provided from the form
         signin() {
-            this.$http.plain.post('/signin', { username: this.username, email: this.email, password: this.password} )
+            this.$http.plain.post('/signup', { username: this.username, email: this.email, password: this.password, passwordConfirmation: this.passwordConfirmation} )
             .then(response => this.signinSuccessful(response))
             .catch(error => this.signinFailed(error))
         },
@@ -51,19 +52,15 @@ export default {
 }
 </script>
 
-<script setup>
-import BodySections from './BodySections.vue';
 
-
-</script>
 
 <template>
   
    
   <div class="min-h-screen flex items-center justify-center bg-gray-900">
     <div class="max-w-sm w-full bg-gray-300 p-10 border border-gray-200 shadow rounded">
-      <h3 class="text-2xl mb-6 text-gray-900">Sign In</h3>
-      <form @submit.prevent="signin">
+      <h3 class="text-2xl mb-6 text-gray-900">Sign Up</h3>
+      <form @submit.prevent="signup">
         <div class="text-red-500" v-if="error">{{ error }}</div>
 
         <div class="mb-6">
@@ -99,15 +96,26 @@ import BodySections from './BodySections.vue';
           />
         </div>
 
+       <div class="mb-6" v-if="password.length > 0">
+    <label for="passwordConfirmation" class="block mb-1 text-gray-700">Confirm Password:</label>
+    <input
+      type="password"
+      v-model="passwordConfirmation"
+      id="passwordConfirmation"
+      class="w-full border border-gray-300 rounded px-3 py-2"
+      placeholder="Confirm password"
+    />
+  </div>
+
         <button
           type="submit"
           class="font-bold px-4 rounded cursor-pointer bg-gradient-to-b from-[#0072FF] to-[#00C853] w-full py-3 text-white"
         >
-          Sign In
+          Sign Up
         </button>
 
         <div class="my-4 text-center">
-          <router-link to="/signup" class="text-blue-600 hover:underline">Sign Up</router-link>
+          <router-link to="/Signin" class="text-blue-600 hover:underline">Sign In</router-link>
         </div>
       </form>
     </div>

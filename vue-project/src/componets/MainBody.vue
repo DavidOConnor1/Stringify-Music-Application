@@ -1,7 +1,7 @@
 <script setup>
  import BodySections from './BodySections.vue';
  import SideNavBar from './SideNavBar.vue';
- import Features from './Features.vue';
+ 
 
 </script>
 

@@ -1,8 +1,8 @@
-// src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router'
 import Signin from '@/componets/Signin.vue' 
-import App from '@/App.vue'
 import MainBody from '@/componets/MainBody.vue'
+import Signup from '@/componets/Signup.vue'
 
 const routes = [
   {
@@ -10,9 +10,15 @@ const routes = [
     name: 'Home',
     component: MainBody
   },
-  {path: '/signin',
+  {
+    path: '/signin',
     name: 'Signin',
     component: Signin
+  },
+  {
+    path:'/signup',
+    name: 'Signup',
+    component: Signup
   },
 ]
 
