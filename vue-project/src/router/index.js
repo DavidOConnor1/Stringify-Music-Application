@@ -1,12 +1,18 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+// src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import Signin from '@/componets/Signin.vue' // 👈 check spelling!
 
-Vue.use(Router)
+const routes = [
+  {
+    path: '/',
+    name: 'Signin',
+    component: Signin
+  }
+]
 
-export default new Router({
-    routes: [
-        {
-            
-        }
-    ]
+const router = createRouter({
+  history: createWebHistory(),
+  routes
 })
+
+export default router
