@@ -17,11 +17,13 @@ export default {
         this.checkSignIn()
     },
     methods: {
+        //take in the parameters provided from the form
         signin() {
             this.$http.plain.post('/signin', { username: this.username, email: this.email, password: this.password} )
             .then(response => this.signinSuccessful(response))
             .catch(error => this.signinFailed(error))
         },
+        //log the user in when the sign in is successfull and load the songs page
         signinSuccessful(response) {
             if(!response.data.csrf){
                 this.signinFailed(response)
@@ -32,10 +34,17 @@ export default {
             this.error = ''
             this.$router.replace('/songs')
         },
+        //if sign in fails throw error and delete token
         signinFailed(error){
             this.error = (error.response && error.response.data && error.response.data.error) || ''
             delete localStorage.csrf
             delete localStorage.signedIn
+        },
+        //if the user is logged in just load the songs page
+        checkSignIn () {
+            if(localStorage.signedIn){
+                this.$router.replace('/songs')
+            }
         }
     }
 }
