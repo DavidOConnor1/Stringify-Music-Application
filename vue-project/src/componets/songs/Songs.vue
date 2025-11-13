@@ -1,5 +1,60 @@
 <script>
-    
+    export default{
+        name: 'Songs',
+        data() {
+            return {
+                artists: [],
+                songs: [],
+                newSong: [],
+                error: '',
+                editedSong: ''
+            }
+        },
+        created() {
+            if(!localStorage.signedIn){
+                this.$router.replace('/')
+            } else {
+                //connecting to the songs controller
+                this.$http.secured.get('/api/v1/songs')
+                .then(response => {this.songs = response.data})
+                .catch(error => this.setError(error, 'An Error has occured when trying to connect to the backend'))
+
+                //connecting to the artists controller
+                 this.$http.secured.get('/api/v1/artists')
+                .then(response => {this.artists = response.data})
+                .catch(error => this.setError(error, 'An Error has occured when trying to connect to the backend'))
+            }
+        },
+         methods: {
+    setError(error, text) {
+      this.error =
+        (error.response && error.response.data && error.response.data.error) ||
+        text;
+    },
+    getArtist(song) {
+        const songArtistValues = this.artists.filter(artist => artist.id === song.artist_id)
+        
+        //loops through the artists
+        let artist
+        songArtistValues.forEach(function(element) {
+            artist = element.name
+        })
+        return artist;
+    },
+    addSong() {
+        const value = this.newSong
+        if(!value) {
+            return 
+        } else {
+            this.$http.post('/api/v1/songs', { song: {title: this.newSong.title, year: this.newSong.year, artist_id: this.newSong.artist}})
+            .then(response => {
+                this.songs.push(response.data)
+                this.newSong = ''
+            })
+            .catch(this.error, 'There was an error when trying to push the new song to the backend ')
+        }
+    }
+    }
 
 </script>
 
