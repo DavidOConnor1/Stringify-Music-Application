@@ -41,12 +41,12 @@ export default {
           class="flex flex-1 items-center justify-center md:items-stretch md:justify-start"
         >
           <!-- Logo -->
-          <a class="flex flex-shrink-0 items-center mr-4" href="index.html">
+          <router-link class="flex flex-shrink-0 items-center mr-4" to="/">
             <img class="h-10 w-auto" :src="logo" alt="Vue Jobs" />
             <span class="hidden md:block text-white text-2xl font-bold ml-2"
               >Stringify</span
             >
-          </a>
+          </router-link>
           <div class="md:ml-auto">
             <div class="flex space-x-2">
               <router-link
@@ -54,15 +54,15 @@ export default {
                 class="text-white bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
                 >Home</router-link
               >
-              <a
-                href="jobs.html"
+              <router-link
+                to="/artist"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                >Discover</a
+                >Discover</router-link
               >
-              <a
-                href="add-job.html"
+              <router-link
+                to="/song"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                >Playlists</a
+                >Playlists</router-link
               >
               <router-link
                 to="./Signin"
