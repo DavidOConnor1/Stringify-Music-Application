@@ -17,12 +17,12 @@ export default {
         this.checkSignIn()
     },
     methods: {
-        signup() { // Changed from signin to signup
+        signup() { 
             this.$plainAxios.post('/signup', { 
                 username: this.username, 
                 email: this.email, 
                 password: this.password, 
-                password_confirmation: this.passwordConfirmation // Match Rails param naming
+                password_confirmation: this.passwordConfirmation 
             })
             .then(response => this.signupSuccessful(response))
             .catch(error => this.signupFailed(error))

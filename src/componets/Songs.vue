@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     fetchSongs() {
-      // Fixed: Use $securedAxios instead of $http.secured
       this.$securedAxios
         .get("/api/v1/songs")
         .then((response) => {
@@ -38,7 +37,7 @@ export default {
         );
     },
     fetchArtists() {
-      // Fixed: Use $securedAxios instead of $http.secured
+      
       this.$securedAxios
         .get("/api/v1/artists")
         .then((response) => {
@@ -67,7 +66,7 @@ export default {
         return;
       }
       
-      // Fixed: Use $securedAxios and simplified payload
+      
       this.$securedAxios
         .post("/api/v1/songs", {
           song: {
@@ -78,7 +77,7 @@ export default {
         })
         .then((response) => {
           this.songs.push(response.data);
-          this.newSong = { title: "", year: "", artist: "" }; // Reset properly
+          this.newSong = { title: "", year: "", artist: "" }; // Resets fields
           this.error = ""; // Clear error on success
         })
         .catch((error) =>
@@ -87,7 +86,7 @@ export default {
     },
     removeSong(song) {
       if (confirm(`Are you sure you want to delete "${song.title}"?`)) {
-        // Fixed: Use $securedAxios
+        
         this.$securedAxios
           .delete(`/api/v1/songs/${song.id}`)
           .then((response) => {
@@ -104,7 +103,7 @@ export default {
       song.artist = song.artist_id;
     },
     updateSong(song) {
-      // Fixed: Use $securedAxios and proper state management
+     
       this.$securedAxios
         .patch(`/api/v1/songs/${song.id}`, {
           song: { 
@@ -174,7 +173,7 @@ export default {
         </select>
         <p class="pt-4 text-sm">
           Is your favorite artist not there?
-          <router-link to="/artists" class="text-blue-600 hover:underline">
+          <router-link to="/artist" class="text-blue-600 hover:underline">
             Add Your Artist
           </router-link>
         </p>
