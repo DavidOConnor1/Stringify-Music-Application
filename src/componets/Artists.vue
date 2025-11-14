@@ -1,20 +1,21 @@
 <script>
-
 export default {
   name: "Artists",
   data() {
     return {
       artists: [],
-      newArtist: [],
+      newArtist: {
+        name: ""
+      },
       error: "",
-      editArtist: "",
+      editedArtist: null, 
     };
   },
   created() {
     if (!localStorage.signedIn) {
       this.$router.replace("/");
     } else {
-      this.$http.secured
+      this.$securedAxios 
         .get("/api/v1/artists")
         .then((response) => {
           this.artists = response.data;
@@ -34,52 +35,63 @@ export default {
         text;
     },
     addArtist() {
-      const value = this.newArtist;
+      const value = this.newArtist.name;
       if (!value) {
+        this.error = "Please enter an artist name";
         return;
       }
-      this.$http.secured
-        .post("/api/v1/artists", { artists: { name: this.newArtist.name } })
+      this.$securedAxios 
+        .post("/api/v1/artists", { artist: { name: this.newArtist.name } }) 
         .then((response) => {
           this.artists.push(response.data);
-          this.newArtist = "";
+          this.newArtist.name = ""; 
+          this.error = ""; // Clear error on success
         })
-        .catch((error) => this.setError(error, "cannot create artist"));
+        .catch((error) => this.setError(error, "Cannot create artist"));
     },
     removeArtist(artist) {
-      this.$http.secured
-        .delete(`/api/v1/artists/${artist.id}`)
-        .then((response) => {
-          this.artists.splice(this.artists.indexOf(artist), 1);
-        })
-        .catch((error) =>
-          this.setError(error, "Cannot remove Artist at this time")
-        );
+      if (confirm(`Are you sure you want to delete "${artist.name}"?`)) {
+        this.$securedAxios
+          .delete(`/api/v1/artists/${artist.id}`)
+          .then((response) => {
+            this.artists = this.artists.filter(a => a.id !== artist.id); 
+          })
+          .catch((error) =>
+            this.setError(error, "Cannot remove artist at this time")
+          );
+      }
     },
-    editArtist(artist) {
+    editArtist(artist) { 
       this.editedArtist = artist;
     },
-    updatedArtist(artist) {
-      this.editedArtist = "";
-      this.$http.secured
+    updateArtist(artist) { 
+      this.$securedAxios 
         .patch(`/api/v1/artists/${artist.id}`, {
-          artist: { title: artist.name },
+          artist: { name: artist.name }, 
         })
-        .catch((error) => this.setError(error, "cannot update artist"));
+        .then(() => {
+          this.editedArtist = null; // Close edit form
+          this.error = ""; // Clear error on success
+        })
+        .catch((error) => this.setError(error, "Cannot update artist"));
     },
+    cancelEdit() {
+      this.editedArtist = null;
+      this.error = "";
+    }
   },
 };
 </script>
 
 <template>
   <div class="max-w-md m-auto py-10">
-    <div class="text-red" v-if="error">{{ error }}</div>
+    <div class="text-red-500 mb-4" v-if="error">{{ error }}</div>
     <h3 class="font-mono font-regular text-3xl mb-4">Add Your Artist</h3>
     <form @submit.prevent="addArtist">
       <div class="mb-6">
         <input
           type="text"
-          class=""
+          class="w-full border border-gray-300 rounded px-3 py-2"
           autofocus
           autocomplete="off"
           placeholder="Enter Your Favourite Artist"
@@ -87,48 +99,62 @@ export default {
         />
       </div>
 
-      <input
+      <button
         type="submit"
-        value="Add Artist"
-        class="font-bold px-4 rounded cursor-pointer no-underline bg-gradient-to-b from-[#0072FF] to-[#00C853] block py-4 text-white items-center justify-center"
-      />
+        class="font-bold px-4 rounded cursor-pointer no-underline bg-gradient-to-b from-[#0072FF] to-[#00C853] block py-4 text-white items-center justify-center w-full"
+      >
+        Add Artist
+      </button>
     </form>
-    <hr class="border border-grey-light my-6" />
+    <hr class="border border-gray-300 my-6" />
     <ul class="list-reset mt-4">
       <li
-        class="py-4"
-        v-for="artist in artists.slice(0, artists.length)"
+        class="py-4 border-b border-gray-200"
+        v-for="artist in artists"
         :key="artist.id"
-        :artist="artist"
       >
         <div class="flex items-center justify-between flex-wrap">
-          <p class="block flex-1 font-mono font-semibold items-center">
+          <p class="block flex-1 font-mono font-semibold items-center text-lg">
             {{ artist.name }}
           </p>
 
-          <button
-            class="bg-transparent text-sm hover:bg-blue hover:text-white text-blue-300 border border-blue-200 no-underline font-bold py-2 px-4 mr-2 rounded"
-            @click.prevent="editArtist(artist)"
-          >
-            Edit
-          </button>
+          <div class="flex space-x-2">
+            <button
+              class="bg-transparent text-sm hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500 no-underline font-bold py-2 px-4 rounded"
+              @click.prevent="editArtist(artist)"
+            >
+              Edit
+            </button>
 
-          <button
-            class="bg-transparent text-sm hover:bg-red hover:text-white text-red-300 border border-red-200 no-underline font-bold py-2 px-4 mr-2 rounded"
-            @click.prevent="removeArtist(artist)"
-          >
-            Delete
-          </button>
+            <button
+              class="bg-transparent text-sm hover:bg-red-500 hover:text-white text-red-500 border border-red-500 no-underline font-bold py-2 px-4 rounded"
+              @click.prevent="removeArtist(artist)"
+            >
+              Delete
+            </button>
+          </div>
         </div>
-        <div v-if="artist == editedArtist">
-          <form @submit.prevent="updatedArtist(artist)">
-            <div class="mb-6 p-4 bg-white rounded border border-gray-200">
-              <input type="text" class="" v-model="artist.name" />
-              <input
-                type="submit"
-                value="Update"
-                class="bg-transparent text-sm hover:bg-blue hover:text-white text-blue-300 border border-blue-200 no-underline font-bold py-2 px-4 mr-2 rounded cursor-pointer"
+        <div v-if="artist === editedArtist" class="mt-4 p-4 bg-gray-50 rounded border border-gray-300">
+          <form @submit.prevent="updateArtist(artist)">
+            <div class="flex items-center space-x-2">
+              <input 
+                type="text" 
+                class="flex-1 border border-gray-300 rounded px-3 py-2"
+                v-model="artist.name" 
               />
+              <button
+                type="submit"
+                class="bg-green-500 text-white text-sm hover:bg-green-600 no-underline font-bold py-2 px-4 rounded"
+              >
+                Update
+              </button>
+              <button
+                type="button"
+                @click="cancelEdit"
+                class="bg-gray-500 text-white text-sm hover:bg-gray-600 no-underline font-bold py-2 px-4 rounded"
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>
