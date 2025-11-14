@@ -5,17 +5,17 @@ export default {
     return {
       artists: [],
       newArtist: {
-        name: ""
+        name: "",
       },
       error: "",
-      editedArtist: null, 
+      editedArtist: null,
     };
   },
   created() {
     if (!localStorage.signedIn) {
       this.$router.replace("/");
     } else {
-      this.$securedAxios 
+      this.$securedAxios
         .get("/api/v1/artists")
         .then((response) => {
           this.artists = response.data;
@@ -40,11 +40,11 @@ export default {
         this.error = "Please enter an artist name";
         return;
       }
-      this.$securedAxios 
-        .post("/api/v1/artists", { artist: { name: this.newArtist.name } }) 
+      this.$securedAxios
+        .post("/api/v1/artists", { artist: { name: this.newArtist.name } })
         .then((response) => {
           this.artists.push(response.data);
-          this.newArtist.name = ""; 
+          this.newArtist.name = "";
           this.error = ""; // Clear error on success
         })
         .catch((error) => this.setError(error, "Cannot create artist"));
@@ -54,20 +54,20 @@ export default {
         this.$securedAxios
           .delete(`/api/v1/artists/${artist.id}`)
           .then((response) => {
-            this.artists = this.artists.filter(a => a.id !== artist.id); 
+            this.artists = this.artists.filter((a) => a.id !== artist.id);
           })
           .catch((error) =>
             this.setError(error, "Cannot remove artist at this time")
           );
       }
     },
-    editArtist(artist) { 
+    editArtist(artist) {
       this.editedArtist = artist;
     },
-    updateArtist(artist) { 
-      this.$securedAxios 
+    updateArtist(artist) {
+      this.$securedAxios
         .patch(`/api/v1/artists/${artist.id}`, {
-          artist: { name: artist.name }, 
+          artist: { name: artist.name },
         })
         .then(() => {
           this.editedArtist = null; // Close edit form
@@ -78,7 +78,7 @@ export default {
     cancelEdit() {
       this.editedArtist = null;
       this.error = "";
-    }
+    },
   },
 };
 </script>
@@ -134,13 +134,16 @@ export default {
             </button>
           </div>
         </div>
-        <div v-if="artist === editedArtist" class="mt-4 p-4 bg-gray-50 rounded border border-gray-300">
+        <div
+          v-if="artist === editedArtist"
+          class="mt-4 p-4 bg-gray-50 rounded border border-gray-300"
+        >
           <form @submit.prevent="updateArtist(artist)">
             <div class="flex items-center space-x-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 class="flex-1 border border-gray-300 rounded px-3 py-2"
-                v-model="artist.name" 
+                v-model="artist.name"
               />
               <button
                 type="submit"

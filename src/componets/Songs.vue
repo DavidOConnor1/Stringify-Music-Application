@@ -8,7 +8,7 @@ export default {
       newSong: {
         title: "",
         year: "",
-        artist: ""
+        artist: "",
       },
       error: "",
       editedSong: null, // Changed to null for better state management
@@ -37,7 +37,6 @@ export default {
         );
     },
     fetchArtists() {
-      
       this.$securedAxios
         .get("/api/v1/artists")
         .then((response) => {
@@ -56,7 +55,9 @@ export default {
         text;
     },
     getArtist(song) {
-      const artist = this.artists.find(artist => artist.id === song.artist_id);
+      const artist = this.artists.find(
+        (artist) => artist.id === song.artist_id
+      );
       return artist ? artist.name : "Unknown Artist";
     },
     addSong() {
@@ -65,8 +66,7 @@ export default {
         this.error = "Please fill in all fields";
         return;
       }
-      
-      
+
       this.$securedAxios
         .post("/api/v1/songs", {
           song: {
@@ -80,17 +80,14 @@ export default {
           this.newSong = { title: "", year: "", artist: "" }; // Resets fields
           this.error = ""; // Clear error on success
         })
-        .catch((error) =>
-          this.setError(error, "Unable to create a new song")
-        );
+        .catch((error) => this.setError(error, "Unable to create a new song"));
     },
     removeSong(song) {
       if (confirm(`Are you sure you want to delete "${song.title}"?`)) {
-        
         this.$securedAxios
           .delete(`/api/v1/songs/${song.id}`)
           .then((response) => {
-            this.songs = this.songs.filter(s => s.id !== song.id);
+            this.songs = this.songs.filter((s) => s.id !== song.id);
           })
           .catch((error) =>
             this.setError(error, "Unable to delete the song at this time")
@@ -103,13 +100,12 @@ export default {
       song.artist = song.artist_id;
     },
     updateSong(song) {
-     
       this.$securedAxios
         .patch(`/api/v1/songs/${song.id}`, {
-          song: { 
-            title: song.title, 
-            year: song.year, 
-            artist_id: song.artist 
+          song: {
+            title: song.title,
+            year: song.year,
+            artist_id: song.artist,
           },
         })
         .then(() => {
@@ -123,7 +119,7 @@ export default {
     cancelEdit() {
       this.editedSong = null;
       this.error = "";
-    }
+    },
   },
 };
 </script>
@@ -161,8 +157,8 @@ export default {
 
       <div class="mb-6">
         <label for="artist" class="block mb-2">Artist:</label>
-        <select 
-          id="artist" 
+        <select
+          id="artist"
           v-model="newSong.artist"
           class="w-full border border-gray-300 rounded px-3 py-2"
         >
@@ -189,7 +185,11 @@ export default {
     <hr class="border border-gray-300 my-6" />
 
     <ul class="list-reset mt-4">
-      <li class="py-4 border-b border-gray-200" v-for="song in songs" :key="song.id">
+      <li
+        class="py-4 border-b border-gray-200"
+        v-for="song in songs"
+        :key="song.id"
+      >
         <div class="flex items-center justify-between flex-wrap">
           <div class="flex-1 pr-4">
             <p class="font-mono font-semibold text-lg">
@@ -213,27 +213,30 @@ export default {
             </button>
           </div>
         </div>
-        
+
         <!-- Edit Form -->
-        <div v-if="song === editedSong" class="mt-4 p-4 bg-gray-50 rounded border border-gray-300">
+        <div
+          v-if="song === editedSong"
+          class="mt-4 p-4 bg-gray-50 rounded border border-gray-300"
+        >
           <form @submit.prevent="updateSong(song)">
             <div class="mb-4">
               <label class="block mb-2">Title</label>
-              <input 
-                v-model="song.title" 
+              <input
+                v-model="song.title"
                 class="w-full border border-gray-300 rounded px-3 py-2"
               />
             </div>
             <div class="mb-4">
               <label class="block mb-2">Year</label>
-              <input 
-                v-model="song.year" 
+              <input
+                v-model="song.year"
                 class="w-full border border-gray-300 rounded px-3 py-2"
               />
             </div>
             <div class="mb-4">
               <label class="block mb-2">Artist</label>
-              <select 
+              <select
                 v-model="song.artist"
                 class="w-full border border-gray-300 rounded px-3 py-2"
               >
