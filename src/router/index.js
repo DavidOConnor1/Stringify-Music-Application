@@ -7,6 +7,7 @@ import Artists from "@/componets/Artists.vue";
 import profile from "@/componets/profile/profile.vue";
 import beArtist from "@/componets/profile/beArtist.vue";
 
+
 const routes = [
   {
     path: "/",
@@ -24,12 +25,12 @@ const routes = [
     component: Signup,
   },
   {
-    path: "/song",
+    path: "/songs",
     name: "Songs",
     component: Songs,
   },
   {
-    path: "/artist",
+    path: "/artists",
     name: "Artists",
     component: Artists,
   },
