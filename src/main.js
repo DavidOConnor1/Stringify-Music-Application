@@ -30,3 +30,7 @@ const validateTokenOnAppStart = () => {
         })
     }
 }
+
+validateTokenOnAppStart();
+
+setInterval(validateTokenOnAppStart, 5*60*1000); //checks every 5 minutes
