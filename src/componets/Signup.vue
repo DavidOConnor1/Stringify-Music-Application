@@ -36,7 +36,7 @@ export default {
       localStorage.csrf = response.data.csrf;
       localStorage.signedIn = true;
       this.error = "";
-      this.$router.replace("/song");
+      this.$router.replace("/songs");
     },
     signupFailed(error) {
       console.error("Signup error:", error);
@@ -49,7 +49,7 @@ export default {
     },
     checkSignIn() {
       if (localStorage.signedIn) {
-        this.$router.replace("/song");
+        this.$router.replace("/songs");
       }
     },
   },

@@ -1,31 +1,32 @@
 <script>
-    export default {
-        name: "StringifyUserMusic",
-        data() {
-            return {
-                songs: [],
-                loading: true,
-                error: null
-            }
-        },
-        async created(){
-            await this.fetchPublicUserSongs()
-        },
-        methods: {
-            async fetchPublicUserSongs(){
-                try{
-                    this.loading = true
-                    const response = await this.$plainAxios.get('/api/v1/public_songs')
-                    this.songs = response.data
-                } catch(error) {
-                    console.error('Error Fetching Stringify Exculsive Artists Songs: ',error)
-                    this.error = 'Failed to load songs'
-                } finally {
-                    this.loading = false
-                }
+export default {
+    name: "StringifyUserMusic",
+    data() {
+        return {
+            songs: [],
+            loading: true,
+            error: null
+        }
+    },
+    async created(){
+        await this.fetchPublicUserSongs()
+    },
+    methods: {
+        async fetchPublicUserSongs(){
+            try{
+                this.loading = true
+                const response = await this.$plainAxios.get('/api/v1/public_songs')
+                console.log('API Response:', response.data) // ADD THIS LINE
+                this.songs = response.data
+            } catch(error) {
+                console.error('Error Fetching Stringify Exculsive Artists Songs: ',error)
+                this.error = 'Failed to load songs'
+            } finally {
+                this.loading = false
             }
         }
     }
+}
 </script>
 
 <template>

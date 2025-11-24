@@ -7,12 +7,11 @@ export default {
       songs: [],
       user: {
         is_artist: false,
-        artist_name: ''
+        artist_name: "",
       },
       newSong: {
         title: "",
         year: "",
-        artist: "",
       },
       error: "",
       editedSong: null,
@@ -24,32 +23,20 @@ export default {
     } else {
       this.fetchUserProfile();
       this.fetchSongs();
+      // ALWAYS fetch artists so we can display artist names
       this.fetchArtists();
     }
   },
   methods: {
     fetchUserProfile() {
       this.$securedAxios
-        .get('/api/v1/user')
-        .then(response => {
+        .get("/api/v1/user")
+        .then((response) => {
           this.user = response.data;
-          // If user is an artist, find and auto-select their artist
-          if (this.user.is_artist) {
-            this.findAndSelectUserArtist();
-          }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Failed to load user profile:", error);
         });
-    },
-    findAndSelectUserArtist() {
-      // Wait for artists to load, then find the user's artist
-      if (this.artists.length > 0) {
-        const userArtist = this.artists.find(artist => artist.user_id === this.user.id);
-        if (userArtist) {
-          this.newSong.artist = userArtist.id;
-        }
-      }
     },
     fetchSongs() {
       this.$securedAxios
@@ -69,10 +56,6 @@ export default {
         .get("/api/v1/artists")
         .then((response) => {
           this.artists = response.data;
-          // After artists load, try to auto-select user's artist
-          if (this.user.is_artist) {
-            this.findAndSelectUserArtist();
-          }
         })
         .catch((error) =>
           this.setError(
@@ -90,15 +73,52 @@ export default {
       const artist = this.artists.find(
         (artist) => artist.id === song.artist_id
       );
-      return artist ? artist.name : "Unknown Artist";
+      if (artist) {
+        return artist.name;
+      }
+
+      // If artist not found locally, check if this is the user's song
+      if (this.user.is_artist && song.artist_id) {
+        // For artists, we can use their artist_name as fallback
+        return this.user.artist_name || "Your Artist Name";
+      }
+
+      return "Unknown Artist";
     },
     addSong() {
       const value = this.newSong;
-      if (!value.title || !value.year || !value.artist) {
-        this.error = "Please fill in all fields";
+      if (!value.title || !value.year) {
+        this.error = "Please fill in title and year";
         return;
       }
 
+      if (this.user.is_artist) {
+        this.createSongForArtist();
+      } else {
+        this.createSongWithSelectedArtist();
+      }
+    },
+    createSongForArtist() {
+      this.findOrCreateUserArtist()
+        .then((artistId) => {
+          return this.$securedAxios.post("/api/v1/songs", {
+            song: {
+              title: this.newSong.title,
+              year: this.newSong.year,
+              artist_id: artistId,
+            },
+          });
+        })
+        .then((response) => {
+          this.songs.push(response.data);
+          this.newSong = { title: "", year: "" };
+          this.error = "";
+          // REFRESH artists to include the newly created one
+          this.fetchArtists();
+        })
+        .catch((error) => this.setError(error, "Unable to create a new song"));
+    },
+    createSongWithSelectedArtist() {
       this.$securedAxios
         .post("/api/v1/songs", {
           song: {
@@ -109,15 +129,34 @@ export default {
         })
         .then((response) => {
           this.songs.push(response.data);
-          // Reset form but keep artist selected if user is an artist
-          this.newSong = { 
-            title: "", 
-            year: "", 
-            artist: this.user.is_artist ? this.newSong.artist : "" 
-          };
-          this.error = ""; // Clear error on success
+          this.newSong = { title: "", year: "", artist: "" };
+          this.error = "";
         })
         .catch((error) => this.setError(error, "Unable to create a new song"));
+    },
+    async findOrCreateUserArtist() {
+      // First, try to find existing artist for this user
+      const existingArtist = this.artists.find(
+        (artist) => artist.user_id === this.user.id
+      );
+      if (existingArtist) {
+        return existingArtist.id;
+      }
+
+      // If no artist exists, create one
+      try {
+        const response = await this.$securedAxios.post("/api/v1/artists", {
+          artist: {
+            name: this.user.artist_name || this.user.username,
+            user_id: this.user.id,
+          },
+        });
+        // Add the new artist to our local artists array
+        this.artists.push(response.data);
+        return response.data.id;
+      } catch (error) {
+        throw new Error("Failed to create artist record");
+      }
     },
     removeSong(song) {
       if (confirm(`Are you sure you want to delete "${song.title}"?`)) {
@@ -133,8 +172,6 @@ export default {
     },
     editSong(song) {
       this.editedSong = song;
-      // Initialize the artist for editing
-      song.artist = song.artist_id;
     },
     updateSong(song) {
       this.$securedAxios
@@ -142,12 +179,12 @@ export default {
           song: {
             title: song.title,
             year: song.year,
-            artist_id: song.artist,
+            artist_id: song.artist_id,
           },
         })
         .then(() => {
-          this.editedSong = null; // Close edit form
-          this.error = ""; // Clear error on success
+          this.editedSong = null;
+          this.error = "";
         })
         .catch((error) =>
           this.setError(error, "Unable to update song at this time")
@@ -166,9 +203,18 @@ export default {
     <div class="text-red-500 mb-4" v-if="error">
       {{ error }}
     </div>
-    <div v-if="user.is_artist" class="mb-4 p-3 bg-purple-600 rounded text-white">
-      What songs do you have in store: <strong>{{ user.artist_name }}</strong>
+
+    <!-- Artist Header -->
+    <div
+      v-if="user.is_artist"
+      class="mb-6 p-4 bg-purple-600 rounded text-white"
+    >
+      <h3 class="text-xl font-semibold mb-2">Create New Song</h3>
+      <p>
+        Your song will be credited to: <strong>{{ user.artist_name }}</strong>
+      </p>
     </div>
+
     <h3 class="font-mono font-regular text-3xl mb-4">Add a New Song</h3>
     <form @submit.prevent="addSong">
       <div class="mb-6">
@@ -195,7 +241,8 @@ export default {
         />
       </div>
 
-      <div class="mb-6">
+      <!-- Artist Selection - ONLY show for non-artists -->
+      <div class="mb-6" v-if="!user.is_artist">
         <label for="artist" class="block mb-2">Artist:</label>
         <select
           id="artist"
@@ -207,16 +254,25 @@ export default {
             {{ artist.name }}
           </option>
         </select>
-        <p class="pt-4 text-sm" v-if="!user.is_artist">
-          Is your favorite artist not there?
+        <p class="pt-4 text-sm">
+          Want to create songs as yourself?
           <router-link to="/beartist" class="text-blue-600 hover:underline">
             Become an Artist
           </router-link>
         </p>
-        <p class="pt-4 text-sm text-green-600" v-else>
-          Your Artist Profile is Automatically selected
-        </p>
       </div>
+
+      <!-- For artists, show their fixed artist name -->
+      <div class="mb-6" v-else>
+        <label class="block mb-2 text-gray-600">Artist:</label>
+        <div class="p-3 bg-gray-100 rounded border">
+          <strong>{{ user.artist_name }}</strong>
+          <p class="text-sm text-gray-500 mt-1">
+            Your artist name is automatically used
+          </p>
+        </div>
+      </div>
+
       <button
         type="submit"
         class="bg-transparent text-sm hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500 no-underline font-bold py-2 px-4 rounded cursor-pointer"
@@ -239,11 +295,13 @@ export default {
               {{ song.title }} &mdash; {{ song.year }}
             </p>
             <p class="font-mono text-gray-600">{{ getArtist(song) }}</p>
+            <span
+              v-if="user.is_artist"
+              class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mt-1 inline-block"
+            >
+              Your Song
+            </span>
           </div>
-          <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded"
-          v-if="user.is_artist && song.artist_id === newSong.artist">
-          Your Song
-          </span>
           <div class="flex space-x-2">
             <button
               class="bg-transparent text-sm hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500 no-underline font-bold py-2 px-4 rounded"
@@ -251,7 +309,6 @@ export default {
             >
               Edit
             </button>
-
             <button
               class="bg-transparent text-sm hover:bg-red-500 hover:text-white text-red-500 border border-red-500 no-underline font-bold py-2 px-4 rounded"
               @click.prevent="removeSong(song)"
@@ -259,60 +316,6 @@ export default {
               Delete
             </button>
           </div>
-        </div>
-
-        <!-- Edit Form -->
-        <div
-          v-if="song === editedSong"
-          class="mt-4 p-4 bg-gray-50 rounded border border-gray-300"
-        >
-          <form @submit.prevent="updateSong(song)">
-            <div class="mb-4">
-              <label class="block mb-2">Title</label>
-              <input
-                v-model="song.title"
-                class="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block mb-2">Year</label>
-              <input
-                v-model="song.year"
-                class="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block mb-2">Artist</label>
-              <select
-                v-model="song.artist"
-                class="w-full border border-gray-300 rounded px-3 py-2"
-              >
-                <option disabled value="">Select an Artist</option>
-                <option
-                  :value="artist.id"
-                  v-for="artist in artists"
-                  :key="artist.id"
-                >
-                  {{ artist.name }}
-                </option>
-              </select>
-            </div>
-            <div class="flex space-x-2">
-              <button
-                type="submit"
-                class="bg-green-500 text-white text-sm hover:bg-green-600 no-underline font-bold py-2 px-4 rounded"
-              >
-                Update
-              </button>
-              <button
-                type="button"
-                @click="cancelEdit"
-                class="bg-gray-500 text-white text-sm hover:bg-gray-600 no-underline font-bold py-2 px-4 rounded"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
         </div>
       </li>
     </ul>
