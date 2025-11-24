@@ -69,8 +69,36 @@
 <template>
     <sideBar/>
     <MainBody>
-         <h2 class="text-2xl font-bold mb-4">Profile</h2>
+        
+        <template>
+          <div class="max-w-md m-auto py-10">
+            <div class="text-red-500 mb-4" v-if="error">
+              <div v-if="Array.isArray(error)">
+                <p v-for="err in error" :key="err">
+                  {{ err }}
+                </p>
+                <div>
+                  {{ error }}
+                </div>
+              </div>
 
+              <div class="text-green-500 mb-4" v-if="success">
+                {{ success }}
+              </div>
+            </div>
+            
+              <h2 class="text-2xl font-bold mb-4">Your Profile</h2>
+
+              <form @submit.prevent="updateProfile">
+                <div class="mb-6">
+                  <label for="username" class="block mb-2 text-gray-700">Username:</label>
+
+                </div>
+              </form>
+
+
+          </div>
+        </template>
     </MainBody>
 
 
