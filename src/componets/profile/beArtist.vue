@@ -85,7 +85,7 @@ export default {
 
                 <Features>
                 <div class="text-white hover:text-blue-300 transition-colors">
-                    <router-link to="/song" >
+                    <router-link to="/songs" >
                         Create Music
                     </router-link>
                 </div>
@@ -141,7 +141,7 @@ export default {
                     </p>
 
                     <div class="flex space-x-4">
-                        <router-link to="/song"
+                        <router-link to="/songs"
                          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
                             Manage Songs
                         </router-link>

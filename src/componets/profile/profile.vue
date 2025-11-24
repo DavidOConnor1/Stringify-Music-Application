@@ -1,6 +1,6 @@
 <script setup>
-import SideNavBar from '../SideNavBar.vue';
-import Features from '../Features.vue';
+import SideNavBar from "../SideNavBar.vue";
+import Features from "../Features.vue";
 </script>
 
 <script>
@@ -12,7 +12,9 @@ export default {
         username: '',
         email: '',
         password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        is_artist: false,
+        artist_name: ''
       },
       error: '',
       success: ''
@@ -68,20 +70,16 @@ export default {
       <h2 class="text-lg font-bold mb-4 text-white">Options</h2>
       <div class="flex flex-col space-y-4">
         <!-- Settings -->
-         <Features>
-        <div class="text-white hover:text-blue-300 transition-colors">
-          <router-link to="/profile">
-            Settings 
-          </router-link>    
-        </div>
-</Features>
+        <Features>
+          <div class="text-white hover:text-blue-300 transition-colors">
+            <router-link to="/profile"> Settings </router-link>
+          </div>
+        </Features>
         <!-- Become an Artist -->
-         <Features>
-        <div class="text-white hover:text-blue-300 transition-colors">
-          <router-link to="/beartist">
-            Become an Artist
-          </router-link>
-        </div>
+        <Features>
+          <div class="text-white hover:text-blue-300 transition-colors">
+            <router-link to="/beartist"> Become an Artist </router-link>
+          </div>
         </Features>
       </div>
     </SideNavBar>
@@ -97,16 +95,20 @@ export default {
             {{ error }}
           </div>
         </div>
-        
+
         <div class="text-green-500 mb-4" v-if="success">
           {{ success }}
         </div>
 
-        <h3 class="text-white font-mono font-regular text-3xl mb-4">Your Profile</h3>
-        
+        <h3 class="text-white font-mono font-regular text-3xl mb-4">
+          Your Profile
+        </h3>
+
         <form @submit.prevent="updateProfile">
           <div class="mb-6">
-            <label for="username" class="block mb-2 text-white">Username:</label>
+            <label for="username" class="block mb-2 text-white"
+              >Username:</label
+            >
             <input
               type="text"
               id="username"
@@ -127,8 +129,26 @@ export default {
             />
           </div>
 
+          <div class="mb-6" v-if="user.is_artist">
+            <label for="artist_name" class="block mb-2 text-white"
+              >Artist Name:</label
+            >
+            <input
+              type="text"
+              id="artist_name"
+              v-model="user.artist_name"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              placeholder="Your artist name"
+            />
+            <p class="text-gray-400 text-sm mt-1">
+              This name appears on your public songs
+            </p>
+          </div>
+
           <div class="mb-6">
-            <label for="password" class="block mb-2 text-white">New Password (leave blank to keep current):</label>
+            <label for="password" class="block mb-2 text-white"
+              >New Password (leave blank to keep current):</label
+            >
             <input
               type="password"
               id="password"
@@ -139,7 +159,9 @@ export default {
           </div>
 
           <div class="mb-6" v-if="user.password">
-            <label for="password_confirmation" class="block mb-2 text-white">Confirm New Password:</label>
+            <label for="password_confirmation" class="block mb-2 text-white"
+              >Confirm New Password:</label
+            >
             <input
               type="password"
               id="password_confirmation"
