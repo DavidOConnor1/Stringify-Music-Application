@@ -4,6 +4,7 @@ import MainBody from "@/componets/MainBody.vue";
 import Signup from "@/componets/Signup.vue";
 import Songs from "@/componets/Songs.vue";
 import Artists from "@/componets/Artists.vue";
+import profile from "@/componets/profile/profile.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/artist",
     name: "Artists",
     component: Artists,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: profile
   },
 ];
 
