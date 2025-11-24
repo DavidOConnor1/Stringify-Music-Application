@@ -9,7 +9,9 @@ export default {
     data() {
         return{
             user: {
-                is_artist: false
+                is_artist: false,
+                artist_name: ''
+
             },
             error: '',
             success: ''
@@ -75,7 +77,7 @@ export default {
                 <!--Becoming an Artists-->
                 <Features>
                 <div class="text-white hover:text-blue-300 transition-colors">
-                    <router-link to="/beArtist" >
+                    <router-link to="/beartist" >
                         Become An Artist
                     </router-link>
                 </div>
@@ -108,25 +110,38 @@ export default {
 
                 <div class="p-6 bg-gray-700 rounded-lg" v-if="!user.is_artist">
                     <h3 class="text-white text-2xl font-semibold mb-4">Become a Stringify Artist</h3>
+                    
                     <p class="text-gray-300 mb-4">
                         Upgrade to a Stringify Artist Account and share your sound with the world!
                         Your Songs will gather user traction from our home page promotion!
                     </p>
-                   <button 
-                   @click="upgradeToArist"
-                   class="w-full bg-gradient-to-b from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Upgrade to Artist
-                   </button>
+                     <div class="mb-4">
+            <label class="block text-white mb-2">Your Artist Name:</label>
+            <input
+              type="text"
+              v-model="artistName"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+              placeholder="Enter your artist name"
+              required
+            />
+                   <button
+            @click="upgradeToArtist"
+            :disabled="!artistName"
+            class="w-full bg-gradient-to-b from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Become an Artist
+          </button>
                 </div>
-
+</div>
                 <div v-else class="p-6 bg-green-900 rounded-lg">
                     <h3 class="text-white text-2xl font-semibold mb-2">Welcome Artist</h3>
+                          <p class="text-green-300 mb-2">Artist Name: <strong>{{ user.artist_name }}</strong></p>
                     <p class="texxt-green-300 mb-4">
                         Your music is gaining traction with the Stringify Users
                     </p>
 
                     <div class="flex space-x-4">
-                        <router-link to="/songs"
+                        <router-link to="/song"
                          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
                             Manage Songs
                         </router-link>

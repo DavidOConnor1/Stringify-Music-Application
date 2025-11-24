@@ -5,24 +5,52 @@ export default {
     return {
       artists: [],
       songs: [],
+      user: {
+        is_artist: false,
+        artist_name: ''
+      },
       newSong: {
         title: "",
         year: "",
         artist: "",
       },
       error: "",
-      editedSong: null, // Changed to null for better state management
+      editedSong: null,
     };
   },
   created() {
     if (!localStorage.signedIn) {
       this.$router.replace("/");
     } else {
+      this.fetchUserProfile();
       this.fetchSongs();
       this.fetchArtists();
     }
   },
   methods: {
+    fetchUserProfile() {
+      this.$securedAxios
+        .get('/api/v1/user')
+        .then(response => {
+          this.user = response.data;
+          // If user is an artist, find and auto-select their artist
+          if (this.user.is_artist) {
+            this.findAndSelectUserArtist();
+          }
+        })
+        .catch(error => {
+          console.error("Failed to load user profile:", error);
+        });
+    },
+    findAndSelectUserArtist() {
+      // Wait for artists to load, then find the user's artist
+      if (this.artists.length > 0) {
+        const userArtist = this.artists.find(artist => artist.user_id === this.user.id);
+        if (userArtist) {
+          this.newSong.artist = userArtist.id;
+        }
+      }
+    },
     fetchSongs() {
       this.$securedAxios
         .get("/api/v1/songs")
@@ -41,6 +69,10 @@ export default {
         .get("/api/v1/artists")
         .then((response) => {
           this.artists = response.data;
+          // After artists load, try to auto-select user's artist
+          if (this.user.is_artist) {
+            this.findAndSelectUserArtist();
+          }
         })
         .catch((error) =>
           this.setError(
@@ -77,7 +109,12 @@ export default {
         })
         .then((response) => {
           this.songs.push(response.data);
-          this.newSong = { title: "", year: "", artist: "" }; // Resets fields
+          // Reset form but keep artist selected if user is an artist
+          this.newSong = { 
+            title: "", 
+            year: "", 
+            artist: this.user.is_artist ? this.newSong.artist : "" 
+          };
           this.error = ""; // Clear error on success
         })
         .catch((error) => this.setError(error, "Unable to create a new song"));
@@ -129,6 +166,9 @@ export default {
     <div class="text-red-500 mb-4" v-if="error">
       {{ error }}
     </div>
+    <div v-if="user.is_artist" class="mb-4 p-3 bg-purple-600 rounded text-white">
+      What songs do you have in store: <strong>{{ user.artist_name }}</strong>
+    </div>
     <h3 class="font-mono font-regular text-3xl mb-4">Add a New Song</h3>
     <form @submit.prevent="addSong">
       <div class="mb-6">
@@ -167,11 +207,14 @@ export default {
             {{ artist.name }}
           </option>
         </select>
-        <p class="pt-4 text-sm">
+        <p class="pt-4 text-sm" v-if="!user.is_artist">
           Is your favorite artist not there?
-          <router-link to="/artist" class="text-blue-600 hover:underline">
-            Add Your Artist
+          <router-link to="/beartist" class="text-blue-600 hover:underline">
+            Become an Artist
           </router-link>
+        </p>
+        <p class="pt-4 text-sm text-green-600" v-else>
+          Your Artist Profile is Automatically selected
         </p>
       </div>
       <button
@@ -197,6 +240,10 @@ export default {
             </p>
             <p class="font-mono text-gray-600">{{ getArtist(song) }}</p>
           </div>
+          <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded"
+          v-if="user.is_artist && song.artist_id === newSong.artist">
+          Your Song
+          </span>
           <div class="flex space-x-2">
             <button
               class="bg-transparent text-sm hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500 no-underline font-bold py-2 px-4 rounded"
