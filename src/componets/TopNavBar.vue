@@ -1,22 +1,22 @@
 <script setup>
 import logo from "@/assets/img/logo.png";
-import { watch } from "vue";
 </script>
 
 <script>
 export default {
   name: "Nav",
-  data(){
+  data() {
     return {
       isAuthenticated: false
     };
   },
   created() {
     this.checkAuthStatus();
-    //setting up this to detect server reloads
+    // Set up beforeunload listener to detect server reloads
     window.addEventListener('beforeunload', this.handleBeforeUnload);
   },
   beforeUnmount() {
+    // Clean up the event listener when component is destroyed
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
   },
   methods: {
@@ -29,14 +29,17 @@ export default {
       this.isAuthenticated = !!localStorage.signedIn && !!localStorage.csrf;
     },
     signOut() {
-      this.$http.secured
-        .delete("signin")
+      this.$securedAxios
+        .delete("/signin")
         .then((response) => {
-          delete localStorage.csrf;
-          delete localStoragw.signedIn;
+          this.clearAuthData();
           this.$router.replace("/");
         })
-        .catch((error) => this.setError(error, "cannot sign out"));
+        .catch((error) => {
+          // Even if the server call fails, clear local auth data
+          this.clearAuthData();
+          this.setError(error, "Cannot sign out");
+        });
     },
     clearAuthData() {
       delete localStorage.csrf;
@@ -44,24 +47,24 @@ export default {
       this.isAuthenticated = false;
     },
     handleBeforeUnload() {
-      //stores a timestamp when a user leaves the page
+      // Store a timestamp when user leaves the page
       sessionStorage.setItem('lastActivity', Date.now().toString());
     },
-    checkServerConnection(){
-      //checks is the server is still responsive
+    checkServerConnection() {
+      // This method can be called periodically to check if server is responsive
       this.$plainAxios.get('/')
-      .catch(() => {
-        //if the server is unreachable
-        this.clearAuthData();
-      });
-    },
-    watch : {
-      //watch for route changes to update auth status
-      '$route'(){
-        this.checkAuthStatus();
-      }
+        .catch(() => {
+          // If server is not reachable, clear auth data
+          this.clearAuthData();
+        });
     }
   },
+  watch: {
+    // Watch for route changes to update auth status
+    '$route'() {
+      this.checkAuthStatus();
+    }
+  }
 };
 </script>
 
@@ -76,7 +79,7 @@ export default {
         >
           <!-- Logo -->
           <router-link class="flex flex-shrink-0 items-center mr-4" to="/">
-            <img class="h-10 w-auto" :src="logo" alt="Vue Jobs" />
+            <img class="h-10 w-auto" :src="logo" alt="Stringify Music" />
             <span class="hidden md:block text-white text-2xl font-bold ml-2"
               >Stringify</span
             >
@@ -89,37 +92,39 @@ export default {
                 >Home</router-link
               >
               <router-link
-                to="/artist"
+                to="/artists"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                 >Discover</router-link
               >
               <router-link
-                to="/song"
+                to="/songs"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                 >Playlists</router-link
               >
+              
+              <!-- Show Sign Up/Login only when NOT authenticated -->
               <template v-if="!isAuthenticated">
-              <router-link
-                to="./Signin"
-                class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                >Sign Up/Login</router-link
-              >
-                </template>
-
-              <template v-else>
-              <router-link to="/profile"
-                class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
+                <router-link
+                  to="/signin"
+                  class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
+                  >Sign Up/Login</router-link
                 >
-                Profile
-              </router-link>
-
-              <button
-              @click="signOut"
-              class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2">
-                Sign Out
-              </button>
-
-
+              </template>
+              
+              <!-- Show Profile and Sign Out only when authenticated -->
+              <template v-else>
+                <router-link 
+                  to="/profile"
+                  class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
+                >
+                  Profile
+                </router-link>
+                <button
+                  @click="signOut"
+                  class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
+                >
+                  Sign Out
+                </button>
               </template>
             </div>
           </div>
