@@ -112,7 +112,9 @@ export default {
                         Upgrade to a Stringify Artist Account and share your sound with the world!
                         Your Songs will gather user traction from our home page promotion!
                     </p>
-                   <button class="w-full bg-gradient-to-b from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-4 rounded transition-colors">
+                   <button 
+                   @click="upgradeToArist"
+                   class="w-full bg-gradient-to-b from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-4 rounded transition-colors">
                     Upgrade to Artist
                    </button>
                 </div>

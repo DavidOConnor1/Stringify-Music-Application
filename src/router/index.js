@@ -5,6 +5,7 @@ import Signup from "@/componets/Signup.vue";
 import Songs from "@/componets/Songs.vue";
 import Artists from "@/componets/Artists.vue";
 import profile from "@/componets/profile/profile.vue";
+import beArtist from "@/componets/profile/beArtist.vue";
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: profile
+  },
+  {
+    path: "/beartist",
+    name: "beArtist",
+    component: beArtist
   },
 ];
 
