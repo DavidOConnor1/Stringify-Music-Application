@@ -1,12 +1,23 @@
 <script setup>
 import logo from "@/assets/img/logo.png";
+import { watch } from "vue";
 </script>
 
 <script>
 export default {
   name: "Nav",
+  data(){
+    return {
+      isAuthenticated: false
+    };
+  },
   created() {
-    this.signedIn();
+    this.checkAuthStatus();
+    //setting up this to detect server reloads
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
   },
   methods: {
     setError(error, text) {
@@ -14,8 +25,8 @@ export default {
         (error.response && error.response.data && error.response.data.error) ||
         text;
     },
-    signedIn() {
-      return localStorage.signedIn;
+    checkAuthStatus() {
+      this.isAuthenticated = !!localStorage.signedIn && !!localStorage.csrf;
     },
     signOut() {
       this.$http.secured
@@ -27,6 +38,29 @@ export default {
         })
         .catch((error) => this.setError(error, "cannot sign out"));
     },
+    clearAuthData() {
+      delete localStorage.csrf;
+      delete localStorage.signedIn;
+      this.isAuthenticated = false;
+    },
+    handleBeforeUnload() {
+      //stores a timestamp when a user leaves the page
+      sessionStorage.setItem('lastActivity', Date.now().toString());
+    },
+    checkServerConnection(){
+      //checks is the server is still responsive
+      this.$plainAxios.get('/')
+      .catch(() => {
+        //if the server is unreachable
+        this.clearAuthData();
+      });
+    },
+    watch : {
+      //watch for route changes to update auth status
+      '$route'(){
+        this.checkAuthStatus();
+      }
+    }
   },
 };
 </script>
@@ -64,11 +98,29 @@ export default {
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                 >Playlists</router-link
               >
+              <template v-if="!isAuthenticated">
               <router-link
                 to="./Signin"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                 >Sign Up/Login</router-link
               >
+                </template>
+
+              <template v-else>
+              <router-link to="/profile"
+                class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
+                >
+                Profile
+              </router-link>
+
+              <button
+              @click="signOut"
+              class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2">
+                Sign Out
+              </button>
+
+
+              </template>
             </div>
           </div>
         </div>
