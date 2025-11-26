@@ -92,7 +92,7 @@ export default {
                 >Home</router-link
               >
               <router-link
-                to="/artists"
+                to="/music-search"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
                 >Discover</router-link
               >
