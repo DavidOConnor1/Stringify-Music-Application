@@ -3,6 +3,7 @@ import BodySections from "./BodySections.vue";
 import SideNavBar from "./SideNavBar.vue";
 import Features from "./Features.vue";
 import stringifyUserMusic from "./stringifyUserMusic.vue";
+import MusicDashboard from "./api/MusicDashboard.vue";
 </script>
 
 <template>
@@ -24,7 +25,10 @@ import stringifyUserMusic from "./stringifyUserMusic.vue";
       </SideNavBar>
     
     <body-sections bg="bg-gray-800" class="flex-1 p-6 overflow-y-auto">
+      <div class="space-y-8">
      <stringifyUserMusic />
+      <MusicDashboard />
+      </div>
     </body-sections>
   </div>
 </template>
