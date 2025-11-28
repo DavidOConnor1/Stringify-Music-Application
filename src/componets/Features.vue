@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps,} from "vue";
 
 defineProps({
   bg: {
@@ -7,6 +7,8 @@ defineProps({
     default: "bg-black/30",
   },
 });
+
+
 </script>
 
 <template>
