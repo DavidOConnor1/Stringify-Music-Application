@@ -94,12 +94,12 @@ export default {
               <router-link
                 to="/music-search"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                >Discover</router-link
+                >Search</router-link
               >
               <router-link
-                to="/songs"
+                to="/musicDashboard"
                 class="text-white hover:bg-gradient-to-b from-[#0072FF] to-[#00C853] hover:text-white rounded-md px-3 py-2"
-                >Playlists</router-link
+                >Discover</router-link
               >
               
               <!-- Show Sign Up/Login only when NOT authenticated -->

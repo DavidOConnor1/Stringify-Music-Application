@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Signin from "@/componets/Signin.vue";
 import MainBody from "@/componets/MainBody.vue";
 import Signup from "@/componets/Signup.vue";
-import Songs from "@/componets/Songs.vue";
+import Songs from "@/componets/profile/Songs.vue";
 import Artists from "@/componets/Artists.vue";
 import profile from "@/componets/profile/profile.vue";
 import beArtist from "@/componets/profile/beArtist.vue";
