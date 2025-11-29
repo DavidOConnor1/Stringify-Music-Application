@@ -138,7 +138,7 @@ export default{
 </script>
 
 <script setup>
-import SideNavBar from "../SideNavBar.vue";
+import SideNavBar from "../navigation/SideNavBar.vue";
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
-import SideNavBar from "../SideNavBar.vue";
-import Features from "../Features.vue";
+import SideNavBar from "../navigation/SideNavBar.vue";
+import Features from "../navigation/Features.vue";
 </script>
 
 <script>
