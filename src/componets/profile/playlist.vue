@@ -1,4 +1,64 @@
+<script setup>
+    import SideNavBar from '../navigation/SideNavBar.vue';
+</script>
+
 <script>
+  export default {
+    name: 'PlaylistDashboard',
+    data(){
+      return{
+        userPlaylists: [],
+        loading: {
+          playlists: true
+        },
+        showCreateModal: false,
+        showAddToPlaylist: false,
+        selectedSong: null,
+        newPlaylist: {
+          name: '',
+          description: '',
+          is_public: true
+        },
+        error: null
+      }
+    },
+    async mounted(){
+      await this.loadUserPlaylist();
+    },
+    methods: {
+      async loadUserPlaylist(){
+        try{
+          this.loading.playlists = true;
+          const response = await this.$plainAxios.get('/api/v1/playlists');
+          this.userPlaylists = response.data;
+        } catch(error){
+          console.error('failed to load playlists: ', error);
+          this.error = 'failed to load playlists';
+        } finally {
+          this.loading.playlists = false;
+        }//end finally
+      },
+
+      async createPlaylist(){
+        try{
+          const response = await this.$plainAxios.post('/api/v1/playlist', {
+            playlist: this.newPlaylist
+          });
+          this.userPlaylists.unshift(response.data);
+          this.showCreateModal = false;
+          this.resetNewPlaylist();
+          this.error = null;
+
+          //shows success message
+          console.log('Playlist created successfully');
+        } catch(error) {
+            console.error('failed to create playlist: ',error);
+            this.error = error.response?.data?.errors?.[0] || 'failed to create playlist';
+        }//end catch
+      },
+      
+    }
+  }//end export
 </script>
 
 <template>
