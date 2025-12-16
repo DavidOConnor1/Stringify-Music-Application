@@ -56,7 +56,45 @@
             this.error = error.response?.data?.errors?.[0] || 'failed to create playlist';
         }//end catch
       },
-      
+      async addSongToPlaylist(playlistId, song){
+        try{
+          await this.$plainAxios.post(`/api/v1/playlists/${playlistId}/add_song`, {
+            song_id: song.id
+          });
+
+          const playIndex = this.userPlaylists.findIndex(p => p.id === playlistId);
+
+          if(playIndex !== -1){
+            this.userPlaylists[playIndex].songs_count += 1;
+          }//end if
+
+          this.showAddToPlaylistModal = false;
+          this.selectedSong = null;
+
+          //success 
+          console.log(`Added ${song.title} to playlist`);
+        } catch(error){
+          console.error('Failed to addd song to playlist:', error);
+          this.error = error.response?.data?.error || 'failed to add song to playlist';
+        }//end catch
+      },
+
+      async deletePlaylist(playlistId){
+        if(!confirm('Are you sure you want to delete this playlist?')){
+            return;
+        }//end if
+
+        try{
+            await this.$plainAxios.delete(`/api/v1/playlists/${playlistId}`);
+
+            //remove local from visit
+            this.userPlaylists = this.userPlaylists.filter(p => p.id !== playlistId);
+            console.log('Playlist deleted successfullty');
+        } catch(error){
+            console.error('failed to remove playlist', error);
+            this.error = 'failed to remove playlist';
+        }
+      }//end delete playlist
     }
   }//end export
 </script>
