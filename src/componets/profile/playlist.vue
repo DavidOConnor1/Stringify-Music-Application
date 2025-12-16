@@ -1,5 +1,8 @@
 <script setup>
     import SideNavBar from '../navigation/SideNavBar.vue';
+    import {ref, onMounted} from 'vue';
+    import { useRouter } from 'vue-router';
+    const router = useRouter();
 </script>
 
 <script>
@@ -94,7 +97,25 @@
             console.error('failed to remove playlist', error);
             this.error = 'failed to remove playlist';
         }
-      }//end delete playlist
+      },//end delete playlist
+
+      openAddToPlaylistModal(song){
+        this.selectedSong = song;
+        this.showAddToPlaylistModal = true;
+        this.error = null;
+      },
+
+      resetNewPlaylist(){
+        this.newPlaylist = {
+          name: '',
+          description: '',
+          is_public: true
+        };
+      },
+
+      navigateToPlaylist(playlistId){
+        this.$router.push(`/playlists/${playlistId}`);
+      }
     }
   }//end export
 </script>
