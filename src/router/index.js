@@ -8,6 +8,7 @@ import profile from "@/componets/profile/profile.vue";
 import beArtist from "@/componets/profile/beArtist.vue";
 import MusicSearch from "@/componets/api/MusicSearch.vue";
 import MusicDashboard from "@/componets/api/MusicDashboard.vue";
+import playlist from "@/componets/profile/playlist.vue";
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: "/musicDashboard",
     name: "MusicDashBoard",
     component: MusicDashboard
+  },
+  {
+    path: "playlist",
+    name: "playlist",
+    component: playlist
   }
 ];
 

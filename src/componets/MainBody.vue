@@ -26,6 +26,11 @@ import stringifyUserMusic from "./stringifyUserMusic.vue";
            Find Your Genre
         </router-link>
        </Features>
+       <Features>
+        <router-link to="/playlist">
+          Create a Playlist
+        </router-link>
+       </Features>
       </div>
       </SideNavBar>
     
