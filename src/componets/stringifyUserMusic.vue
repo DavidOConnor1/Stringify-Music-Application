@@ -221,13 +221,7 @@ export default {
               By: {{ song.user?.username || "Unknown User" }}
             </p>
 
-            <!-- Playlist Button -->
-            <button
-              @click="addToPlaylist(song)"
-              class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
-            >
-              Add to Playlist
-            </button>
+            
           </div>
         </div>
       </section>
@@ -236,12 +230,7 @@ export default {
       <section class="mb-12">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-3xl text-white font-bold">Featured Artists</h2>
-          <button
-            @click="fetchFeaturedArtists"
-            class="text-blue-400 hover:text-blue-300 transition-colors text-sm"
-          >
-            Refresh
-          </button>
+          
         </div>
 
         <!-- Loading State -->
@@ -290,12 +279,7 @@ export default {
       <section class="mb-12">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-3xl text-white font-bold">Featured Songs</h2>
-          <button
-            @click="fetchFeaturedSongs"
-            class="text-blue-400 hover:text-blue-300 transition-colors text-sm"
-          >
-            Refresh
-          </button>
+          
         </div>
 
         <!-- Loading State -->
@@ -331,12 +315,7 @@ export default {
             </p>
 
             <div class="flex space-x-2">
-              <button
-                @click="addToPlaylist(song)"
-                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
-              >
-                Add to Playlist
-              </button>
+             
               <a
                 :href="song.external_url"
                 target="_blank"

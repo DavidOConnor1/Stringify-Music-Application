@@ -32,7 +32,7 @@ export default {
       localStorage.csrf = response.data.csrf;
       localStorage.signedIn = true;
       this.error = "";
-      this.$router.replace("/songs");
+      this.$router.replace("/");
     },
     signinFailed(error) {
       console.error("Signin error:", error);

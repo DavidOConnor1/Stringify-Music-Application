@@ -117,12 +117,7 @@ export default {
 
             <!-- Action Buttons -->
             <div class="flex space-x-2">
-              <button
-                @click="addToPlaylist(song)"
-                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
-              >
-                Add to Playlist
-              </button>
+              
               <a
                 v-if="song.external_url"
                 :href="song.external_url"
